@@ -38,18 +38,18 @@ export default function (Vue) {
         silent: silent,
         dispatchEvent: !!dispatchEvent,
         throttleWait: throttleWait || 200,
-        preLoad: preLoad || 1.3,
+        preLoad: preLoad || 1.3, // 预加载高度比例
         preLoadTop: preLoadTop || 0,
-        error: error || DEFAULT_URL,
-        loading: loading || DEFAULT_URL,
-        attempt: attempt || 3,
+        error: error || DEFAULT_URL, // 图片加载失败显示图
+        loading: loading || DEFAULT_URL, // 图片加载中显示图
+        attempt: attempt || 3, // 图片加载尝试次数
         scale: scale || getDPR(scale),
-        ListenEvents: listenEvents || DEFAULT_EVENTS,
+        ListenEvents: listenEvents || DEFAULT_EVENTS, // 监听的事件
         hasbind: false,
         supportWebp: supportWebp(),
         filter: filter || {},
         adapter: adapter || {},
-        observer: !!observer,
+        observer: !!observer, // 是否使用IntersectionObserver
         observerOptions: observerOptions || DEFAULT_OBSERVER_OPTIONS
       }
       this._initEvent()
@@ -215,6 +215,7 @@ export default function (Vue) {
       this._removeListenerTarget(window)
     }
 
+    // 设置监听模式
     setMode (mode) {
       if (!hasIntersectionObserver && mode === modeType.observer) {
         mode = modeType.event
@@ -222,7 +223,7 @@ export default function (Vue) {
 
       this.mode = mode // event or observer
 
-      if (mode === modeType.event) {
+      if (mode === modeType.event) { // event
         if (this._observer) {
           this.ListenerQueue.forEach(listener => {
             this._observer.unobserve(listener.el)
@@ -230,10 +231,12 @@ export default function (Vue) {
           this._observer = null
         }
 
+        // 监听事件
         this.TargetQueue.forEach(target => {
           this._initListen(target.el, true)
         })
-      } else {
+      } else { // observer
+        // 监听事件
         this.TargetQueue.forEach(target => {
           this._initListen(target.el, false)
         })
@@ -292,10 +295,14 @@ export default function (Vue) {
      * @param  {boolean} start flag
      * @return
      */
+    // 监听或移除事件
+    // start为on  监听事件
+    // start为off  移除事件
     _initListen (el, start) {
       this.options.ListenEvents.forEach((evt) => _[start ? 'on' : 'off'](el, evt, this.lazyLoadHandler))
     }
 
+    // 初始化loading loaded error的事件监听方法
     _initEvent () {
       this.Event = {
         listeners: {
@@ -338,6 +345,8 @@ export default function (Vue) {
      * find nodes which in viewport and trigger load
      * @return
      */
+    // 懒加载处理函数
+    // 将监听队列中loaded状态的监听对象取出存放在freeList中并删掉，判断未加载的监听对象是否处在预加载位置，如果是则执行load方法
     _lazyLoadHandler () {
       const freeList = []
       this.ListenerQueue.forEach((listener, index) => {
@@ -358,6 +367,7 @@ export default function (Vue) {
     * set mode to observer
     * @return
     */
+   // 初始化IntersectionObserver ???
     _initIntersectionObserver () {
       if (!hasIntersectionObserver) return
       this._observer = new IntersectionObserver(this._observerHandler.bind(this), this.options.observerOptions)

@@ -157,6 +157,7 @@ function supportWebp () {
   return support
 }
 
+// 时间戳节流函数
 function throttle (action, delay) {
   let timeout = null
   let lastRun = 0
@@ -196,6 +197,7 @@ function testSupportsPassive () {
 
 const supportsPassive = testSupportsPassive()
 
+// 监听和移除事件
 const _ = {
   on (el, type, func, capture = false) {
     if (supportsPassive) {
