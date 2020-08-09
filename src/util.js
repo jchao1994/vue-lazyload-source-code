@@ -60,6 +60,8 @@ function some (arr, fn) {
   return has
 }
 
+// 根据data-srcset获取最佳的bestSelectedSrc(width比containerWidth大的最小的src)
+// srcset="images/bg_star.jpg 1200w, images/share.jpg 800w, images/gun.png 320w"
 function getBestSelectionFromSrcset (el, scale) {
   if (el.tagName !== 'IMG' || !el.getAttribute('data-srcset')) return
 
@@ -87,6 +89,7 @@ function getBestSelectionFromSrcset (el, scale) {
     result.push([tmpWidth, tmpSrc])
   })
 
+  // 按width降序排序，width相同根据src中是否带有.webp排序
   result.sort(function (a, b) {
     if (a[0] < b[0]) {
       return 1
@@ -107,6 +110,8 @@ function getBestSelectionFromSrcset (el, scale) {
   let bestSelectedSrc = ''
   let tmpOption
 
+  // 遍历result，找到正好比containerWidth大且下一个就比containerWidth小的src作为bestSelectedSrc
+  // 如果都比containerWidth大，就取最后一个(也就是最小的，因为之前做了降序排序)
   for (let i = 0; i < result.length; i++) {
     tmpOption = result[i]
     bestSelectedSrc = tmpOption[1]
@@ -214,6 +219,7 @@ const _ = {
   }
 }
 
+// 异步加载image，成功执行resolve，失败执行reject
 const loadImageAsync = (item, resolve, reject) => {
   let image = new Image()
   if (!item || !item.src) {
@@ -228,8 +234,8 @@ const loadImageAsync = (item, resolve, reject) => {
 
   image.onload = function () {
     resolve({
-      naturalHeight: image.naturalHeight,
-      naturalWidth: image.naturalWidth,
+      naturalHeight: image.naturalHeight, // 图像原始高度
+      naturalWidth: image.naturalWidth, // 图像原始宽度
       src: image.src
     })
   }
@@ -295,6 +301,7 @@ function ObjectKeys (obj) {
   }
 }
 
+// 类数组转换为数组
 function ArrayFrom (arrLike) {
   let len = arrLike.length
   const list = []
@@ -306,6 +313,8 @@ function ArrayFrom (arrLike) {
 
 function noop () {}
 
+// image缓存，当缓存数量超过max时，移除第一个(也就是最先被缓存的那个)
+// 缓存的是src
 class ImageCache {
   constructor ({ max }) {
     this.options = {

@@ -4,7 +4,7 @@ import {
   noop
 } from './util'
 
-export default (lazyManager) => {
+export default (lazyManager) => { // lazyManager就是lazy实例
   return {
     props: {
       src: [String, Object],
@@ -13,6 +13,7 @@ export default (lazyManager) => {
         default: 'img'
       }
     },
+    // 当触发load()时，this.renderSrc改变，触发组件更新，重新渲染render，更新src属性，实现懒加载
     render (h) {
       return h(this.tag, {
         attrs: {
@@ -46,10 +47,13 @@ export default (lazyManager) => {
       }
     },
     created () {
+      // 初始化
       this.init()
       this.renderSrc = this.options.loading
     },
     mounted () {
+      // dom元素挂载完毕，才可以对其进行监听事件
+      // 监听的是这个lazy-image组件的父元素的可见性，渲染的是当前这个组件lazy-image的src
       this.el = this.$el
       lazyManager.addLazyBox(this)
       lazyManager.lazyLoadHandler()
@@ -58,6 +62,7 @@ export default (lazyManager) => {
       lazyManager.removeComponent(this)
     },
     methods: {
+      // 更新props传入的src，设置初始的src error loading，并且将渲染renderSrc设为loading
       init () {
         const { src, loading, error } = lazyManager._valueFormatter(this.src)
         this.state.loaded = false

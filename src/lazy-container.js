@@ -35,6 +35,8 @@ const defaultOptions = {
   selector: 'img'
 }
 
+// 懒加载容器
+// 对容器元素的所有img子元素都设置懒加载
 class LazyContainer {
   constructor ({ el, binding, vnode, lazy }) {
     this.el = null
@@ -63,6 +65,7 @@ class LazyContainer {
     })
   }
 
+  // 取所有img子元素
   getImgs () {
     return ArrayFrom(this.el.querySelectorAll(this.options.selector))
   }

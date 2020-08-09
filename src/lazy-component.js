@@ -8,6 +8,7 @@ export default (lazy) => {
         default: 'div'
       }
     },
+    // 当触发load()时，this.show变为true，触发组件更新，重新渲染render，将this.$slots.default渲染到lazy-component中，实现懒加载
     render (h) {
       return h(this.tag, null, this.show ? this.$slots.default : null)
     },
@@ -22,6 +23,7 @@ export default (lazy) => {
       }
     },
     mounted () {
+      // 监听的是lazy-component这个组件的父元素的可见性，渲染的是当前这个组件lazy-component的子元素this.$slots.default
       this.el = this.$el
       lazy.addLazyBox(this)
       lazy.lazyLoadHandler()
@@ -42,6 +44,8 @@ export default (lazy) => {
       load () {
         this.show = true
         this.state.loaded = true
+        // <lazy-component @show=handleShow></lazy-component>
+        // 触发show的回调函数
         this.$emit('show', this)
       },
       destroy () {
