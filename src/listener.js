@@ -98,6 +98,7 @@ export default class ReactiveListener {
    * get el node rect
    * @return
    */
+  // 获取元素的大小及其相对于视口的位置
   getRect () {
     this.rect = this.el.getBoundingClientRect()
   }
@@ -107,6 +108,8 @@ export default class ReactiveListener {
    * @return {Boolean} el is in view
    */
   // 判断元素位置是否处在预加载视图内，若元素处在视图内部则返回true，反之则返回false
+  // window.innerHeight 窗口的文档显示区的高度
+  // window.innerWidth 窗口的文档显示区的宽度
   checkInView () {
     this.getRect()
     return (this.rect.top < window.innerHeight * this.options.preLoad && this.rect.bottom > this.options.preLoadTop) &&

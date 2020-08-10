@@ -20,6 +20,14 @@ import {
 import ReactiveListener from './listener'
 
 const DEFAULT_URL = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+// 父元素的默认监听事件，当父元素监听到这些事件时，会触发回调lazyLoadHandler，通知listener加载
+// scroll 元素滚动条的滚动事件
+// wheel 鼠标滚轮在元素上的滚动事件
+// mousewheel 鼠标滚轮在元素上的滚动事件
+// resize 元素大小调整事件
+// animationend CSS动画完成后的触发事件
+// transitionend CSS完成过渡后的触发事件
+// touchmove 手指在元素上滑动的触发事件
 const DEFAULT_EVENTS = ['scroll', 'wheel', 'mousewheel', 'resize', 'animationend', 'transitionend', 'touchmove']
 // 生成IntersectionObserver实例时传入的options
 const DEFAULT_OBSERVER_OPTIONS = {
@@ -254,7 +262,7 @@ export default function (Vue) {
 
       this.mode = mode // event or observer
 
-      if (mode === modeType.event) { // event
+      if (mode === modeType.event) { // event 监听父元素的事件，触发lazyLoadHandler()，检查listener是否在可视区域内，在的话触发listener的load方法渲染image
         if (this._observer) {
           this.ListenerQueue.forEach(listener => {
             this._observer.unobserve(listener.el)
@@ -266,7 +274,7 @@ export default function (Vue) {
         this.TargetQueue.forEach(target => {
           this._initListen(target.el, true)
         })
-      } else { // observer
+      } else { // observer 使用IntersectionObserver API监听listener对应的dom元素的可见性，直接触发listener的load方法渲染image
         // 移除监听事件
         this.TargetQueue.forEach(target => {
           this._initListen(target.el, false)

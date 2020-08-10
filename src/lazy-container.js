@@ -54,6 +54,7 @@ class LazyContainer {
     this.options = assign({}, defaultOptions, binding.value)
 
     const imgs = this.getImgs()
+    // 对img子元素生成新的listener进行懒加载处理
     imgs.forEach(el => {
       this.lazy.add(el, assign({}, this.binding, {
         value: {
